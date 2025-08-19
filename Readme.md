@@ -122,3 +122,11 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 - Depo detaylarında arama yapılabilir, kritik stok seviyeleri tanımlanabilir.  
 - Depo hareketleri (gelen, giden, transfer, düzeltme) loglanır.  
 - Roller sayesinde kullanıcıya göre yetki sınırlandırması yapılır.  
+
+## 🛠️ Geliştirme ve Çalıştırma
+
+- `npm install` ile bağımlılıkları kurun.
+- `node server.js` komutu ile sunucuyu başlatın.
+- **POST /register** – `emailPrefix`, `username`, `password`, `confirmPassword` parametreleri ile yeni kullanıcı oluşturur ve 6 haneli doğrulama kodunu konsola yazar.
+- **POST /verify** – `email` ve `code` ile hesabı doğrular.
+- **POST /login** – `email` ve `password` ile JWT token döner.
