@@ -8,13 +8,18 @@ app.use(express.json());
 
 const JWT_SECRET = 'verysecretkey'; // For demo purposes only
 
+// Root endpoint
+app.get('/', (_req, res) => {
+  res.send('Sinyal Stok API çalışıyor');
+});
+
 // Helper to send JSON error
 function sendError(res, message, code = 400) {
   return res.status(code).json({ error: message });
 }
 
-// Registration endpoint
-app.post('/register', (req, res) => {
+// Kayıt uç noktası
+app.post('/kayit', (req, res) => {
   const { emailPrefix, username, password, confirmPassword } = req.body;
   if (!emailPrefix || !username || !password || !confirmPassword) {
     return sendError(res, 'Eksik bilgi');
@@ -42,8 +47,8 @@ app.post('/register', (req, res) => {
   });
 });
 
-// Verification endpoint
-app.post('/verify', (req, res) => {
+// Doğrulama uç noktası
+app.post('/dogrula', (req, res) => {
   const { email, code } = req.body;
   if (!email || !code) {
     return sendError(res, 'Eksik bilgi');
@@ -69,8 +74,8 @@ app.post('/verify', (req, res) => {
   });
 });
 
-// Login endpoint
-app.post('/login', (req, res) => {
+// Giriş uç noktası
+app.post('/giris', (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return sendError(res, 'Eksik bilgi');

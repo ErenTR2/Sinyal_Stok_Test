@@ -126,7 +126,8 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 ## 🛠️ Geliştirme ve Çalıştırma
 
 - `npm install` ile bağımlılıkları kurun.
-- `node server.js` komutu ile sunucuyu başlatın.
-- **POST /register** – `emailPrefix`, `username`, `password`, `confirmPassword` parametreleri ile yeni kullanıcı oluşturur ve 6 haneli doğrulama kodunu konsola yazar.
-- **POST /verify** – `email` ve `code` ile hesabı doğrular.
-- **POST /login** – `email` ve `password` ile JWT token döner.
+- `node index.js` komutu ile sunucuyu başlatın.
+- **GET /** – Sunucunun çalıştığını kontrol etmek için basit bir mesaj döner.
+- **POST /kayit** – `emailPrefix`, `username`, `password`, `confirmPassword` parametreleri ile yeni kullanıcı oluşturur ve 6 haneli doğrulama kodunu konsola yazar.
+- **POST /dogrula** – `email` ve `code` ile hesabı doğrular.
+- **POST /giris** – `email` ve `password` ile JWT token döner.

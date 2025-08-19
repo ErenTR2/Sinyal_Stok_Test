@@ -2,9 +2,10 @@
   "name": "sinyal_stok_test",
   "version": "1.0.0",
   "description": "Sinyal Stok, firmamızın stok takibini yapmak için geliştirdiğimiz web tabanlı sistemdir.   Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini gidermek ve tamamen kendi kontrolümüzde, daha esnek bir çözüm sunmaktır.",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"No tests specified\""
+    "test": "echo \"No tests specified\"",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
