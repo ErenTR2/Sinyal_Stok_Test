@@ -8,10 +8,10 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 ## 🔐 Hesap Sistemi
 
 - **Kayıt Olma:**
-  - Mail adresi otomatik **@sinyalizasyon.com** uzantılıdır. Kullanıcı yalnızca baş kısmını yazar (`ad.soyad` gibi).
-  - Kullanıcı adı alanı vardır.
+  - Mail adresi otomatik **@sinyalziasyon.com** uzantılıdır. Kullanıcı yalnızca baş kısmını yazar (`ad.soyad` gibi).
+  - Ad Soyad alanı vardır.
   - Şifre 2 kez girilir.
-  - Kayıt tamamlandığında kullanıcı otomatik giriş yapar ve ana sayfaya yönlendirilir.
+  - Kayıt sonrası e-posta ile gönderilen doğrulama kodu girilmeden hesabı kullanılamaz.
 
 
 - **Giriş Yapma:**
@@ -113,8 +113,8 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 
 ## 📌 Özet
 
-- Kullanıcı kayıt olurken sadece `@sinyalizasyon.com` e-posta adresleri kabul edilir.
-- Kayıt olan kullanıcı ana sayfaya yönlendirilir ve oturumu açık kalır.
+- Kullanıcı kayıt olurken sadece `@sinyalziasyon.com` e-posta adresleri kabul edilir.
+- Kayıt sonrası gelen doğrulama kodu onaylandığında kullanıcı ana sayfaya yönlendirilir ve oturumu açık kalır.
 - Ana sayfada kritik stoklar görüntülenir.  
 - Ürünler bölümünde sürükle-bırak ile depo kolon sırası kişiselleştirilebilir.  
 - Depo detaylarında arama yapılabilir, kritik stok seviyeleri tanımlanabilir.  
@@ -127,7 +127,9 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 - `node index.js` komutu ile sunucuyu başlatın.
 - **GET /** – Oturum açık değilse `/giris` sayfasına yönlendirir, aksi halde karşılama sayfasını gösterir.
 - **GET /giris** – Giriş formunu gösterir.
-- **POST /giris** – `email` ve `password` ile oturum açar, başarılı olursa ana sayfaya yönlendirir.
+- **POST /giris** – `emailPrefix` ve `password` ile oturum açar, başarılı olursa ana sayfaya yönlendirir.
 - **GET /kayit** – Kayıt formunu gösterir.
-- **POST /kayit** – `emailPrefix`, `username`, `password`, `confirmPassword` bilgileriyle yeni kullanıcı oluşturur, oturumu açar ve ana sayfaya yönlendirir.
+- **POST /kayit** – `emailPrefix`, `adSoyad`, `password`, `confirmPassword` bilgileriyle yeni kullanıcı oluşturur, doğrulama kodu gönderir ve `/dogrula` sayfasına yönlendirir.
+- **GET /dogrula** – E-postaya gelen kodu girmek için formu gösterir.
+- **POST /dogrula** – Kod doğruysa hesabı doğrular ve ana sayfaya yönlendirir.
 - **GET /cikis** – Oturumu kapatır ve `/giris` sayfasına yönlendirir.
