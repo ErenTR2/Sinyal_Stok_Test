@@ -11,10 +11,8 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
   - Mail adresi otomatik **@sinyalizasyon.com** uzantılıdır. Kullanıcı yalnızca baş kısmını yazar (`ad.soyad` gibi).
   - Kullanıcı adı alanı vardır.
   - Şifre 2 kez girilir.
-  - Kayıt sırasında kullanıcıya **6 haneli doğrulama kodu** e-posta ile gönderilir.
-  - Kod girilmeden hesap aktifleşmez.
-  - Kullanıcı sayfayı kapatsa bile tekrar giriş yaptığında doğrulama ekranından devam eder.
-  - Böylece `@sinyalizasyon.com` mailine sahip olmayan hiç kimse sisteme giremez.
+  - Kayıt tamamlandığında kullanıcı otomatik giriş yapar ve ana sayfaya yönlendirilir.
+
 
 - **Giriş Yapma:**
   - Sadece e-posta (tam adres) ve şifre ile giriş yapılır. Kullanıcı adı ile giriş yoktur.
@@ -115,8 +113,8 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 
 ## 📌 Özet
 
-- Kullanıcı kayıt olurken sadece `@sinyalizasyon.com` e-posta adresleri kabul edilir.  
-- Doğrulama kodu girilmeden giriş yapılamaz.  
+- Kullanıcı kayıt olurken sadece `@sinyalizasyon.com` e-posta adresleri kabul edilir.
+- Kayıt olan kullanıcı ana sayfaya yönlendirilir ve oturumu açık kalır.
 - Ana sayfada kritik stoklar görüntülenir.  
 - Ürünler bölümünde sürükle-bırak ile depo kolon sırası kişiselleştirilebilir.  
 - Depo detaylarında arama yapılabilir, kritik stok seviyeleri tanımlanabilir.  
@@ -127,7 +125,9 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 
 - `npm install` ile bağımlılıkları kurun.
 - `node index.js` komutu ile sunucuyu başlatın.
-- **GET /** – Sunucunun çalıştığını kontrol etmek için basit bir mesaj döner.
-- **POST /kayit** – `emailPrefix`, `username`, `password`, `confirmPassword` parametreleri ile yeni kullanıcı oluşturur ve 6 haneli doğrulama kodunu konsola yazar.
-- **POST /dogrula** – `email` ve `code` ile hesabı doğrular.
-- **POST /giris** – `email` ve `password` ile JWT token döner.
+- **GET /** – Oturum açık değilse `/giris` sayfasına yönlendirir, aksi halde karşılama sayfasını gösterir.
+- **GET /giris** – Giriş formunu gösterir.
+- **POST /giris** – `email` ve `password` ile oturum açar, başarılı olursa ana sayfaya yönlendirir.
+- **GET /kayit** – Kayıt formunu gösterir.
+- **POST /kayit** – `emailPrefix`, `username`, `password`, `confirmPassword` bilgileriyle yeni kullanıcı oluşturur, oturumu açar ve ana sayfaya yönlendirir.
+- **GET /cikis** – Oturumu kapatır ve `/giris` sayfasına yönlendirir.
