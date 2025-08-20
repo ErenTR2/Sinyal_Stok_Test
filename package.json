@@ -1,0 +1,9 @@
+{
+  "name": "sinyal-stok-monorepo",
+  "private": true,
+  "workspaces": ["backend", "frontend"],
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier -w ."
+  }
+}
