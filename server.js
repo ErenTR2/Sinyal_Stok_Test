@@ -33,10 +33,20 @@ db.serialize(() => {
 
 // Mail transporter
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS
+    pass: process.env.MAIL_PASS,
+  },
+});
+
+transporter.verify((err) => {
+  if (err) {
+    console.error('Mail sunucusuna bağlanılamadı:', err);
+  } else {
+    console.log('Mail sunucusu hazır');
   }
 });
 
@@ -75,23 +85,32 @@ app.post('/register', redirectIfAuth, (req, res) => {
   const hashed = bcrypt.hashSync(password, 10);
   const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-  db.run('INSERT INTO users (name, email, password, verification_code) VALUES (?,?,?,?)',
+  db.run(
+    'INSERT INTO users (name, email, password, verification_code) VALUES (?,?,?,?)',
     [name, email, hashed, code],
-    function(err) {
+    function (err) {
       if (err) {
         return res.render('register', { error: 'Mail zaten kayıtlı.' });
       }
-      transporter.sendMail({
-        from: process.env.MAIL_USER,
-        to: email,
-        subject: 'Doğrulama Kodunuz',
-        text: `Doğrulama kodunuz: ${code}`
-      }, (mailErr) => {
-        if (mailErr) console.error(mailErr);
-        req.session.userId = this.lastID;
-        res.redirect('/verify');
-      });
-    });
+      transporter.sendMail(
+        {
+          from: process.env.MAIL_USER,
+          to: email,
+          subject: 'Doğrulama Kodunuz',
+          text: `Doğrulama kodunuz: ${code}`,
+        },
+        (mailErr) => {
+          if (mailErr) {
+            console.error(mailErr);
+            db.run('DELETE FROM users WHERE id = ?', this.lastID);
+            return res.render('register', { error: 'Doğrulama maili gönderilemedi.' });
+          }
+          req.session.userId = this.lastID;
+          res.redirect('/verify');
+        }
+      );
+    }
+  );
 });
 
 app.get('/verify', requireAuth, (req, res) => {

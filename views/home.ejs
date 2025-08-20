@@ -9,6 +9,7 @@
     .container { display:flex; }
     .left { width:33%; }
     .right { width:67%; }
+    .right section { margin-bottom:20px; }
   </style>
 </head>
 <body>
@@ -40,15 +41,20 @@
       </ul>
     </div>
     <div class="right">
-      <h3>Kritik Stok</h3>
-      <p>Hiç kritik stok yok.</p>
-      <a href="#">Tümünü Görüntüle</a>
+      <section class="critical">
+        <h3>Kritik Stok</h3>
+        <p>Hiç kritik stok yok.</p>
+        <a href="#">Tümünü Görüntüle</a>
+      </section>
+      <section class="recent">
+        <h3>Son Hareketler</h3>
+        <ul>
+          <li>Henüz işlem yok.</li>
+        </ul>
+        <a href="#">Tümünü Görüntüle</a>
+      </section>
     </div>
   </div>
-  <h3>Son Hareketler</h3>
-  <ul>
-    <li>Henüz işlem yok.</li>
-  </ul>
   <a href="/logout">Çıkış Yap</a>
 </body>
 </html>
