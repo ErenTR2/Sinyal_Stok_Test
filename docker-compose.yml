@@ -3,9 +3,9 @@ services:
   db:
     image: postgres:15
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: sinyalstok
+      POSTGRES_USER: sinyal
+      POSTGRES_PASSWORD: Sinyal3545
+      POSTGRES_DB: sinyal_stok
     ports:
       - '5432:5432'
     volumes:
@@ -16,6 +16,12 @@ services:
       - '4000:4000'
     env_file:
       - ./backend/.env
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: sinyal_stok
+      PGUSER: sinyal
+      PGPASSWORD: Sinyal3545
     depends_on:
       - db
   frontend:

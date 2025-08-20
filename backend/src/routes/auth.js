@@ -18,13 +18,13 @@ function checkEmail(email) {
 
 router.post('/kayit', async (req, res, next) => {
   try {
-    const { eposta, sifre } = registerSchema.parse(req.body);
+    const { ad, soyad, eposta, sifre } = registerSchema.parse(req.body);
     const email = checkEmail(eposta);
     const hashed = await bcrypt.hash(sifre, 10);
     const token = crypto.randomBytes(20).toString('hex');
     await db.query(
-      'INSERT INTO users (email, password, verification_token) VALUES ($1,$2,$3)',
-      [email, hashed, token]
+      'INSERT INTO users (ad, soyad, email, password, verification_token) VALUES ($1,$2,$3,$4,$5)',
+      [ad, soyad, email, hashed, token]
     );
     const verifyLink = `${process.env.FRONTEND_URL}/dogrulama?token=${token}`;
     await sendMail({

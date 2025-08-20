@@ -10,9 +10,9 @@ const useStore = create((set) => ({
     await api.post('/giris', { eposta: email, sifre });
     set({ kullanici: { eposta: email } });
   },
-  kayit: async (eposta, sifre) => {
+  kayit: async (ad, soyad, eposta, sifre, sifreTekrar) => {
     const email = eposta + DOMAIN;
-    await api.post('/kayit', { eposta: email, sifre });
+    await api.post('/kayit', { ad, soyad, eposta: email, sifre, sifreTekrar });
   },
 }));
 
