@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doğrula</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<header><img src="/logo.svg" alt="Logo" /><span>SİNYAL STOK SİSTEMİ</span></header>
+<main>
+  <h2>Doğrulama</h2>
+  <p id="info"></p>
+  <form method="POST" action="/dogrula">
+    <label>Doğrulama Kodu
+      <input type="text" name="code" required />
+    </label>
+    <button type="submit">Doğrula</button>
+  </form>
+</main>
+<script>
+  fetch('/api/pending-email').then(r=>r.json()).then(d=>{
+    if(d.email){
+      document.getElementById('info').innerText = d.email + ' adresine gönderilen kodu giriniz.';
+    } else {
+      window.location = '/giris';
+    }
+  });
+</script>
+</body>
+</html>

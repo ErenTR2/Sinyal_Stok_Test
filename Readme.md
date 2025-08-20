@@ -8,13 +8,11 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 ## 🔐 Hesap Sistemi
 
 - **Kayıt Olma:**
-  - Mail adresi otomatik **@sinyalizasyon.com** uzantılıdır. Kullanıcı yalnızca baş kısmını yazar (`ad.soyad` gibi).
-  - Kullanıcı adı alanı vardır.
+  - Mail adresi otomatik **@sinyalziasyon.com** uzantılıdır. Kullanıcı yalnızca baş kısmını yazar (`ad.soyad` gibi).
+  - Ad Soyad alanı vardır.
   - Şifre 2 kez girilir.
-  - Kayıt sırasında kullanıcıya **6 haneli doğrulama kodu** e-posta ile gönderilir.
-  - Kod girilmeden hesap aktifleşmez.
-  - Kullanıcı sayfayı kapatsa bile tekrar giriş yaptığında doğrulama ekranından devam eder.
-  - Böylece `@sinyalizasyon.com` mailine sahip olmayan hiç kimse sisteme giremez.
+  - Kayıt sonrası e-posta ile gönderilen doğrulama kodu girilmeden hesabı kullanılamaz.
+
 
 - **Giriş Yapma:**
   - Sadece e-posta (tam adres) ve şifre ile giriş yapılır. Kullanıcı adı ile giriş yoktur.
@@ -115,10 +113,24 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 
 ## 📌 Özet
 
-- Kullanıcı kayıt olurken sadece `@sinyalizasyon.com` e-posta adresleri kabul edilir.  
-- Doğrulama kodu girilmeden giriş yapılamaz.  
+- Kullanıcı kayıt olurken sadece `@sinyalziasyon.com` e-posta adresleri kabul edilir.
+- Kayıt sonrası gelen doğrulama kodu onaylandığında kullanıcı ana sayfaya yönlendirilir ve oturumu açık kalır.
 - Ana sayfada kritik stoklar görüntülenir.  
 - Ürünler bölümünde sürükle-bırak ile depo kolon sırası kişiselleştirilebilir.  
 - Depo detaylarında arama yapılabilir, kritik stok seviyeleri tanımlanabilir.  
 - Depo hareketleri (gelen, giden, transfer, düzeltme) loglanır.  
 - Roller sayesinde kullanıcıya göre yetki sınırlandırması yapılır.  
+
+## 🛠️ Geliştirme ve Çalıştırma
+
+- `npm install` ile bağımlılıkları kurun.
+- `node index.js` komutu ile sunucuyu başlatın.
+- Arayüz dosyaları `public/` klasöründedir; her sayfa logolu üst şerit ile gelir.
+- **GET /** – Oturum açık değilse `/giris` sayfasına yönlendirir, aksi halde `public/index.html` dosyası sunulur.
+- **GET /giris** – Giriş formunu (`public/giris.html`) gösterir.
+- **POST /giris** – `emailPrefix` ve `password` ile oturum açar, başarılı olursa ana sayfaya yönlendirir.
+- **GET /kayit** – Kayıt formunu (`public/kayit.html`) gösterir.
+- **POST /kayit** – `emailPrefix`, `adSoyad`, `password`, `confirmPassword` bilgileriyle yeni kullanıcı oluşturur, doğrulama kodu gönderir ve `/dogrula` sayfasına yönlendirir.
+- **GET /dogrula** – Doğrulama formunu (`public/dogrula.html`) gösterir.
+- **POST /dogrula** – Kod doğruysa hesabı doğrular ve ana sayfaya yönlendirir.
+- **GET /cikis** – Oturumu kapatır ve `/giris` sayfasına yönlendirir.

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kayıt</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<header><img src="/logo.svg" alt="Logo" /><span>SİNYAL STOK SİSTEMİ</span></header>
+<main>
+  <h2>Kayıt Ol</h2>
+  <form method="POST" action="/kayit">
+    <label>E-posta
+      <div style="display:flex;align-items:center;">
+        <input type="text" name="emailPrefix" required style="flex:1" />
+        <span>@sinyalziasyon.com</span>
+      </div>
+    </label>
+    <label>Ad Soyad
+      <input type="text" name="adSoyad" required />
+    </label>
+    <label>Şifre
+      <input type="password" name="password" required />
+    </label>
+    <label>Şifre (Tekrar)
+      <input type="password" name="confirmPassword" required />
+    </label>
+    <button type="submit">Kayıt Ol</button>
+  </form>
+  <p>Zaten hesabınız var mı? <a href="/giris">Giriş yapın</a></p>
+</main>
+</body>
+</html>
