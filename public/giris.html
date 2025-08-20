@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Giriş</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<header><img src="/logo.svg" alt="Logo" /><span>SİNYAL STOK SİSTEMİ</span></header>
+<main>
+  <h2>Giriş Yap</h2>
+  <form method="POST" action="/giris">
+    <label>E-posta
+      <div style="display:flex;align-items:center;">
+        <input type="text" name="emailPrefix" required style="flex:1" />
+        <span>@sinyalziasyon.com</span>
+      </div>
+    </label>
+    <label>Şifre
+      <input type="password" name="password" required />
+    </label>
+    <button type="submit">Giriş</button>
+  </form>
+  <p>Hesabınız yok mu? <a href="/kayit">Kayıt olun</a></p>
+</main>
+</body>
+</html>

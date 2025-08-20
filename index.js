@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const nodemailer = require('nodemailer');
+const path = require('path');
 const db = require('./db');
 
 const DOMAIN = 'sinyalziasyon.com';
@@ -21,17 +22,16 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
-app.use(express.static('public'));
+app.use(express.static('public', { index: false }));
 
-const layout = (title, body) => `<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>${title}</title><style>body{font-family:Arial,sans-serif;margin:0}header{border-top:4px solid #e60000;background:#fff;display:flex;justify-content:center;align-items:center;padding:10px 0;position:relative}header img{position:absolute;left:10px;height:32px}main{padding:20px}form{max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:10px}label{display:flex;flex-direction:column;font-weight:bold}input{padding:8px}button{padding:10px}</style></head><body><header><img src="/logo.svg" alt="Logo"><span>SİNYAL STOK SİSTEMİ</span></header><main>${body}</main></body></html>`;
+const layout = (title, body) => `<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><title>${title}</title><link rel="stylesheet" href="/style.css"></head><body><header><img src="/logo.svg" alt="Logo"><span>SİNYAL STOK SİSTEMİ</span></header><main>${body}</main></body></html>`;
 
 // Ana sayfa
 app.get('/', (req, res) => {
   if (!req.session.user) {
     return res.redirect('/giris');
   }
-  const { username } = req.session.user;
-  res.send(layout('Ana Sayfa', `<h2>Hoş geldiniz, ${username}</h2><a href="/cikis">Çıkış Yap</a>`));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Giriş formu
@@ -39,23 +39,7 @@ app.get('/giris', (req, res) => {
   if (req.session.user) {
     return res.redirect('/');
   }
-  const form = `
-    <h2>Giriş Yap</h2>
-    <form method="POST" action="/giris">
-      <label>E-posta
-        <div style="display:flex;align-items:center;">
-          <input type="text" name="emailPrefix" required style="flex:1" />
-          <span>@${DOMAIN}</span>
-        </div>
-      </label>
-      <label>Şifre
-        <input type="password" name="password" required />
-      </label>
-      <button type="submit">Giriş</button>
-    </form>
-    <p>Hesabınız yok mu? <a href="/kayit">Kayıt olun</a></p>
-  `;
-  res.send(layout('Giriş', form));
+  res.sendFile(path.join(__dirname, 'public', 'giris.html'));
 });
 
 // Giriş işlemi
@@ -87,29 +71,7 @@ app.get('/kayit', (req, res) => {
   if (req.session.user) {
     return res.redirect('/');
   }
-  const form = `
-    <h2>Kayıt Ol</h2>
-    <form method="POST" action="/kayit">
-      <label>E-posta
-        <div style="display:flex;align-items:center;">
-          <input type="text" name="emailPrefix" required style="flex:1" />
-          <span>@${DOMAIN}</span>
-        </div>
-      </label>
-      <label>Ad Soyad
-        <input type="text" name="adSoyad" required />
-      </label>
-      <label>Şifre
-        <input type="password" name="password" required />
-      </label>
-      <label>Şifre (Tekrar)
-        <input type="password" name="confirmPassword" required />
-      </label>
-      <button type="submit">Kayıt Ol</button>
-    </form>
-    <p>Zaten hesabınız var mı? <a href="/giris">Giriş yapın</a></p>
-  `;
-  res.send(layout('Kayıt', form));
+  res.sendFile(path.join(__dirname, 'public', 'kayit.html'));
 });
 
 // Kayıt işlemi
@@ -155,21 +117,23 @@ app.get('/dogrula', (req, res) => {
   if (req.session.user) {
     return res.redirect('/');
   }
-  const email = req.session.pendingEmail;
-  if (!email) {
+  if (!req.session.pendingEmail) {
     return res.redirect('/giris');
   }
-  const form = `
-    <h2>Doğrulama</h2>
-    <p>${email} adresine gönderilen kodu girin.</p>
-    <form method="POST" action="/dogrula">
-      <label>Doğrulama Kodu
-        <input type="text" name="code" required />
-      </label>
-      <button type="submit">Doğrula</button>
-    </form>
-  `;
-  res.send(layout('Doğrula', form));
+  res.sendFile(path.join(__dirname, 'public', 'dogrula.html'));
+});
+
+// Kullanıcı bilgisi
+app.get('/api/me', (req, res) => {
+  if (!req.session.user) {
+    return res.json({ authenticated: false });
+  }
+  res.json({ authenticated: true, username: req.session.user.username });
+});
+
+// Bekleyen e-posta
+app.get('/api/pending-email', (req, res) => {
+  res.json({ email: req.session.pendingEmail || null });
 });
 
 // Doğrulama işlemi

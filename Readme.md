@@ -125,11 +125,12 @@ Amaç; Paraşüt benzeri programların stok bölümündeki eksikliklerini giderm
 
 - `npm install` ile bağımlılıkları kurun.
 - `node index.js` komutu ile sunucuyu başlatın.
-- **GET /** – Oturum açık değilse `/giris` sayfasına yönlendirir, aksi halde karşılama sayfasını gösterir.
-- **GET /giris** – Giriş formunu gösterir.
+- Arayüz dosyaları `public/` klasöründedir; her sayfa logolu üst şerit ile gelir.
+- **GET /** – Oturum açık değilse `/giris` sayfasına yönlendirir, aksi halde `public/index.html` dosyası sunulur.
+- **GET /giris** – Giriş formunu (`public/giris.html`) gösterir.
 - **POST /giris** – `emailPrefix` ve `password` ile oturum açar, başarılı olursa ana sayfaya yönlendirir.
-- **GET /kayit** – Kayıt formunu gösterir.
+- **GET /kayit** – Kayıt formunu (`public/kayit.html`) gösterir.
 - **POST /kayit** – `emailPrefix`, `adSoyad`, `password`, `confirmPassword` bilgileriyle yeni kullanıcı oluşturur, doğrulama kodu gönderir ve `/dogrula` sayfasına yönlendirir.
-- **GET /dogrula** – E-postaya gelen kodu girmek için formu gösterir.
+- **GET /dogrula** – Doğrulama formunu (`public/dogrula.html`) gösterir.
 - **POST /dogrula** – Kod doğruysa hesabı doğrular ve ana sayfaya yönlendirir.
 - **GET /cikis** – Oturumu kapatır ve `/giris` sayfasına yönlendirir.
