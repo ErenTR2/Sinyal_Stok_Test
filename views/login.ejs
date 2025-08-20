@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Giriş Yap</title>
+</head>
+<body>
+  <h1>Giriş Yap</h1>
+  <% if (error) { %>
+    <p style="color:red"><%= error %></p>
+  <% } %>
+  <form method="post" action="/login">
+    <label>Mail: <input name="email_prefix" required> @sinyalizasyon.com</label><br>
+    <label>Şifre: <input type="password" name="password" required></label><br>
+    <button type="submit">Giriş Yap</button>
+  </form>
+  <p>Hesabın yok mu? <a href="/register">Kayıt Ol</a></p>
+</body>
+</html>

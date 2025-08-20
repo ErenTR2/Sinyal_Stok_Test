@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ana Sayfa</title>
+  <style>
+    .quick-boxes { display:flex; gap:10px; }
+    .quick-box { flex:1; border:1px solid #ccc; padding:10px; text-align:center; }
+    .container { display:flex; }
+    .left { width:33%; }
+    .right { width:67%; }
+  </style>
+</head>
+<body>
+  <h1>Hoş geldin, <%= name %></h1>
+  <form method="get" action="/search">
+    <input name="q" placeholder="Ara...">
+    <button type="submit">Ara</button>
+  </form>
+  <div class="quick-boxes">
+    <div class="quick-box"><a href="/products">Ürünler</a><div>0</div></div>
+    <div class="quick-box" style="color:red"><a href="/critical">Kritik Stok</a><div>0</div></div>
+    <div class="quick-box"><a href="/reports/7days">7 Günlük Hareket</a></div>
+  </div>
+  <div class="container">
+    <div class="left">
+      <h3>Hızlı İşlemler</h3>
+      <ul>
+        <li><a href="#">Depolar</a></li>
+        <li><a href="#">Depolar Arası Transfer</a></li>
+        <li><a href="#">Gelen Ürünler</a></li>
+        <li><a href="#">Giden Ürünler</a></li>
+        <li><a href="#">Stok Düzeltme</a></li>
+      </ul>
+      <h3>Raporlar</h3>
+      <ul>
+        <li><a href="#">Günlük Hareket Raporu</a></li>
+        <li><a href="#">Kritik Stok Raporu</a></li>
+        <li><a href="#">Depo Bazlı Envanter Raporu</a></li>
+      </ul>
+    </div>
+    <div class="right">
+      <h3>Kritik Stok</h3>
+      <p>Hiç kritik stok yok.</p>
+      <a href="#">Tümünü Görüntüle</a>
+    </div>
+  </div>
+  <h3>Son Hareketler</h3>
+  <ul>
+    <li>Henüz işlem yok.</li>
+  </ul>
+  <a href="/logout">Çıkış Yap</a>
+</body>
+</html>

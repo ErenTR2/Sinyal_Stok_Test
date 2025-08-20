@@ -1,0 +1,23 @@
+{
+  "name": "sinyal_stok_test",
+  "version": "1.0.0",
+  "description": "Sinyal Stok Sistemi, firmaların stoklarını kolayca yönetebilmesi için geliştirilmiş web tabanlı bir stok takip ve yönetim yazılımıdır.   Bu sistemde kullanıcı rolleri, doğrulama mekanizmaları, depo bazlı yönetim ve detaylı raporlama özellikleri yer almaktadır.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "nodemailer": "^7.0.5",
+    "sqlite3": "^5.1.7"
+  }
+}
