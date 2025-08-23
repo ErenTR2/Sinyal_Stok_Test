@@ -20,13 +20,27 @@ router.post("/register", async (req, res) => {
     const { email, username, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "missing_fields" });
 
-    const hashed = await bcrypt.hash(password, 10);
-    await query(
-      "INSERT INTO users (email, username, password, role) VALUES ($1,$2,$3,$4)",
-      [email, username || "", hashed, "kullanıcı"]
-    );
+    // E-posta zaten var mı?
+    const existRes = await query("SELECT id FROM users WHERE email=$1", [email]);
+    if (existRes.rows?.length) return res.status(400).json({ error: "email_in_use" });
 
-    // İstersen burada doğrulama kodu üretip mail gönderebilirsin
+    const hashed = await bcrypt.hash(password, 10);
+
+    // Kullanıcıyı oluştur
+    const { rows } = await query(
+      "INSERT INTO users (email, username, password_hash) VALUES ($1,$2,$3) RETURNING id",
+      [email, username || "", hashed]
+    );
+    const userId = rows?.[0]?.id;
+
+    // Varsayılan rol ata
+    const roleRes = await query("SELECT id FROM roles WHERE name=$1 LIMIT 1", ["kullanici"]);
+    const roleId = roleRes.rows?.[0]?.id;
+    if (userId && roleId) {
+      await query("INSERT INTO user_roles (user_id, role_id) VALUES ($1,$2)", [userId, roleId]);
+    }
+
+    // Doğrulama kodu gönder
     const code = Math.floor(100000 + Math.random() * 900000);
     setCode(email, code, 900);
     await sendVerificationCode(email, code);
@@ -38,20 +52,85 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// E-posta doğrulama
+router.post("/verify", async (req, res) => {
+  try {
+    const { email, code } = req.body;
+    if (!email || !code) return res.status(400).json({ error: "missing_fields" });
+
+    const valid = verifyCode(email, code);
+    if (!valid) return res.status(400).json({ error: "invalid_code" });
+
+    await query("UPDATE users SET verified=true WHERE email=$1", [email]);
+
+    const { rows } = await query(
+      `SELECT u.id, u.username, r.name as role
+       FROM users u
+       LEFT JOIN user_roles ur ON ur.user_id=u.id
+       LEFT JOIN roles r ON r.id=ur.role_id
+       WHERE u.email=$1 LIMIT 1`,
+      [email]
+    );
+    const user = rows?.[0];
+
+    const token = jwt.sign(
+      { uid: user.id, role: user.role },
+      process.env.JWT_SECRET || "dev",
+      { expiresIn: "7d" }
+    );
+
+    res.json({ ok: true, token, user: { id: user.id, email, username: user.username, role: user.role } });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "verify_failed" });
+  }
+});
+
+// Doğrulama kodunu yeniden gönder
+router.post("/resend-code", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "missing_fields" });
+
+    const { rows } = await query("SELECT id FROM users WHERE email=$1 LIMIT 1", [email]);
+    if (!rows?.[0]) return res.status(404).json({ error: "user_not_found" });
+
+    const code = Math.floor(100000 + Math.random() * 900000);
+    setCode(email, code, 900);
+    await sendVerificationCode(email, code);
+
+    res.json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "resend_failed" });
+  }
+});
+
 /* ---- Login ---- */
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "missing_fields" });
 
-    const { rows } = await query("SELECT id, email, username, password, role FROM users WHERE email=$1 LIMIT 1", [email]);
+    const { rows } = await query(
+      `SELECT u.id, u.email, u.username, u.password_hash, r.name as role
+       FROM users u
+       LEFT JOIN user_roles ur ON ur.user_id=u.id
+       LEFT JOIN roles r ON r.id=ur.role_id
+       WHERE u.email=$1 LIMIT 1`,
+      [email]
+    );
     const user = rows?.[0];
     if (!user) return res.status(404).json({ error: "user_not_found" });
 
-    const ok = await bcrypt.compare(password, user.password);
+    const ok = await bcrypt.compare(password, user.password_hash);
     if (!ok) return res.status(400).json({ error: "wrong_password" });
 
-    const token = jwt.sign({ uid: user.id, role: user.role }, process.env.JWT_SECRET || "dev", { expiresIn: "7d" });
+    const token = jwt.sign(
+      { uid: user.id, role: user.role },
+      process.env.JWT_SECRET || "dev",
+      { expiresIn: "7d" }
+    );
     res.json({
       ok: true,
       token,
@@ -69,11 +148,11 @@ router.post("/change-password/request", async (req, res) => {
     const { email, current } = req.body;
     if (!email || !current) return res.status(400).json({ error: "missing_fields" });
 
-    const { rows } = await query("SELECT id, password FROM users WHERE email=$1 LIMIT 1", [email]);
+    const { rows } = await query("SELECT id, password_hash FROM users WHERE email=$1 LIMIT 1", [email]);
     const user = rows?.[0];
     if (!user) return res.status(404).json({ error: "user_not_found" });
 
-    const ok = await bcrypt.compare(current, user.password);
+    const ok = await bcrypt.compare(current, user.password_hash);
     if (!ok) return res.status(400).json({ error: "wrong_password" });
 
     const code = Math.floor(100000 + Math.random() * 900000);
@@ -96,7 +175,7 @@ router.post("/change-password/confirm", async (req, res) => {
     if (!valid) return res.status(400).json({ error: "invalid_code" });
 
     const hashed = await bcrypt.hash(newPassword, 10);
-    await query("UPDATE users SET password=$1 WHERE email=$2", [hashed, email]);
+    await query("UPDATE users SET password_hash=$1 WHERE email=$2", [hashed, email]);
     res.json({ ok: true });
   } catch (e) {
     console.error(e);
