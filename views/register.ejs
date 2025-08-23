@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Kayıt Ol</title>
+</head>
+<body>
+  <h1>Kayıt Ol</h1>
+  <% if (error) { %>
+    <p style="color:red"><%= error %></p>
+  <% } %>
+  <form method="post" action="/register">
+    <label>Mail: <input name="email_prefix" required> @sinyalizasyon.com</label><br>
+    <label>Ad Soyad: <input name="name" required></label><br>
+    <label>Şifre: <input type="password" name="password" required></label><br>
+    <label>Şifre Tekrar: <input type="password" name="confirm_password" required></label><br>
+    <button type="submit">Kayıt Ol</button>
+  </form>
+  <p>Zaten hesabın var mı? <a href="/login">Giriş Yap</a></p>
+</body>
+</html>

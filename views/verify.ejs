@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Hesabı Doğrula</title>
+</head>
+<body>
+  <h1>Doğrulama</h1>
+  <% if (error) { %>
+    <p style="color:red"><%= error %></p>
+  <% } %>
+  <form method="post" action="/verify">
+    <label>Doğrulama Kodu: <input name="code" required></label><br>
+    <button type="submit">Doğrula</button>
+  </form>
+</body>
+</html>
