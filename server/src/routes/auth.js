@@ -43,7 +43,11 @@ router.post("/register", async (req, res) => {
     // Doğrulama kodu gönder
     const code = Math.floor(100000 + Math.random() * 900000);
     setCode(email, code, 900);
-    await sendVerificationCode(email, code);
+    try {
+      await sendVerificationCode(email, code);
+    } catch (err) {
+      console.error("verification email failed:", err.message);
+    }
 
     res.json({ ok: true, email });
   } catch (e) {
@@ -97,7 +101,11 @@ router.post("/resend-code", async (req, res) => {
 
     const code = Math.floor(100000 + Math.random() * 900000);
     setCode(email, code, 900);
-    await sendVerificationCode(email, code);
+    try {
+      await sendVerificationCode(email, code);
+    } catch (err) {
+      console.error("verification email failed:", err.message);
+    }
 
     res.json({ ok: true });
   } catch (e) {

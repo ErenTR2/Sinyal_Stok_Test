@@ -3,25 +3,30 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
 
-/**
- * SMTP transporter
- * .env örneği:
- *   SMTP_HOST=smtp.yandex.com
- *   SMTP_PORT=587
- *   SMTP_SECURE=false
- *   SMTP_USER=noreply@sinyalizasyon.com
- *   SMTP_PASS=...
- *   SMTP_FROM="Sinyal Stok <noreply@sinyalizasyon.com>"
- */
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT || 587),
-  secure: String(process.env.SMTP_SECURE) === "true",
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// SMTP ayarları eksikse mail göndermeyi atla
+const canSend = process.env.SMTP_HOST && process.env.SMTP_USER;
+let transporter;
+if (canSend) {
+  /**
+   * SMTP transporter
+   * .env örneği:
+   *   SMTP_HOST=smtp.yandex.com
+   *   SMTP_PORT=587
+   *   SMTP_SECURE=false
+   *   SMTP_USER=noreply@sinyalizasyon.com
+   *   SMTP_PASS=...
+   *   SMTP_FROM="Sinyal Stok <noreply@sinyalizasyon.com>"
+   */
+  transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: String(process.env.SMTP_SECURE) === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+}
 
 /** Doğrulama kodu gönderir (şifre değişikliği / kayıt) */
 export async function sendVerificationCode(to, code) {
@@ -36,12 +41,21 @@ export async function sendVerificationCode(to, code) {
     </div>
   `;
 
-  return transporter.sendMail({
-    from: process.env.SMTP_FROM || process.env.SMTP_USER,
-    to,
-    subject,
-    html,
-  });
+  if (!canSend) {
+    console.log(`[DEV] Verification code for ${to}: ${code}`);
+    return;
+  }
+
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to,
+      subject,
+      html,
+    });
+  } catch (err) {
+    console.error("sendVerificationCode failed:", err.message);
+  }
 }
 
 /** Kritik stok bildirimi (opsiyonel) */
