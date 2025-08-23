@@ -32,7 +32,7 @@ export default function Login() {
 // avatar kalıcı olsun:
       if (data.user?.avatar) localStorage.setItem("avatar", data.user.avatar);
 
-      nav("/dashboard");
+      nav("/anasayfa");
     } catch (e) {
       setErr(e.response?.data?.error || "Giriş başarısız.");
     } finally {

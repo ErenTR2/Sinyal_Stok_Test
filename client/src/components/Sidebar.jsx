@@ -10,7 +10,7 @@ export default function Sidebar() {
   return (
     <aside className="d-none d-md-block col-md-3 col-lg-2 p-0 border-end bg-white">
       <div className="list-group list-group-flush sticky-top" style={{ top: 60 }}>
-        <NavLink to="/dashboard" className={link}>
+        <NavLink to="/anasayfa" className={link}>
           <i className="bi bi-speedometer2"></i> Ana Sayfa
         </NavLink>
         <NavLink to="/urunler" className={link}>
