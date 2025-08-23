@@ -1,0 +1,73 @@
+:root { --brand-red:#d32f2f; }
+body { font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+.header-title { font-weight: 800; letter-spacing: .2px; }
+
+/* Sticky topbar + kırmızı şerit */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: #fff;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.topbar::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-6px; height:6px;
+  background: var(--brand-red);
+}
+
+/* avatar çevresinde halka */
+.avatar-ring {
+  width: 140px;
+  height: 140px;
+  padding: 6px;
+  border-radius: 9999px;
+  background: conic-gradient(#dc2626, #ef4444, #dc2626);
+  display: grid;
+  place-items: center;
+}
+
+.avatar-ring img {
+  border-radius: 9999px;
+  width: 128px;
+  height: 128px;
+  object-fit: cover;
+}
+
+/* avatar editor */
+.avatar-editor {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #f3f4f6;
+  border-radius: 12px;
+}
+
+.avatar-editor img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-origin: center center;
+  cursor: grab;
+}
+
+/* dairesel maske sadece referans; kırpma canvas'ta yapılıyor */
+.avatar-mask {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  box-shadow: 0 0 0 9999px rgba(0,0,0,.25) inset;
+  width: 320px;
+  height: 320px;
+  margin: auto;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+a { color: inherit; }
