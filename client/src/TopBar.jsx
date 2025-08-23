@@ -2,6 +2,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import logoUrl from "./assets/logo.png";
+import RoleGate from "./components/RoleGate.jsx";
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -29,18 +30,29 @@ export default function TopBar() {
           Sinyal Stok Sistemi
         </div>
 
-        {/* Profil (logout yok) */}
-        <button
-          className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
-          onClick={()=>navigate("/profil")}
-          title="Profil"
-        >
-          <img
-            src={sessionStorage.getItem("avatar") || "https://i.pravatar.cc/40"}
-            alt="avatar" width={24} height={24} style={{borderRadius:"50%"}}
-          />
-          <span>Profil</span>
-        </button>
+        {/* Yönetici ayarları + Profil */}
+        <div className="d-flex align-items-center gap-2">
+          <RoleGate allow={["yönetici"]}>
+            <button
+              className="btn btn-outline-secondary btn-sm"
+              onClick={()=>navigate("/ayarlar")}
+              title="Ayarlar"
+            >
+              Ayarlar
+            </button>
+          </RoleGate>
+          <button
+            className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2"
+            onClick={()=>navigate("/profil")}
+            title="Profil"
+          >
+            <img
+              src={sessionStorage.getItem("avatar") || "https://i.pravatar.cc/40"}
+              alt="avatar" width={24} height={24} style={{borderRadius:"50%"}}
+            />
+            <span>Profil</span>
+          </button>
+        </div>
       </div>
     </header>
   );
