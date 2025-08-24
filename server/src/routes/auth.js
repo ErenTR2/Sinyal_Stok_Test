@@ -8,29 +8,53 @@ import { setCode, verifyCode } from "../store/codes.js";
 
 const router = Router();
 
-// Ensure new auth-related columns exist for older databases
+// Ensure auth tables/columns exist for fresh or legacy databases
 let checked = false;
-async function ensureUserColumns() {
+async function ensureAuthTables() {
   if (checked) return;
   checked = true;
   try {
+    // core user table
+    await query(`CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      username TEXT NOT NULL DEFAULT '',
+      password_hash TEXT NOT NULL DEFAULT '',
+      verified BOOLEAN NOT NULL DEFAULT false,
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    )`);
+    // ensure columns for older installs
     await query(
-      "ALTER TABLE IF EXISTS users ADD COLUMN IF NOT EXISTS username TEXT NOT NULL DEFAULT ''"
+      "ALTER TABLE users ADD COLUMN IF NOT EXISTS username TEXT NOT NULL DEFAULT ''"
     );
     await query(
-      "ALTER TABLE IF EXISTS users ADD COLUMN IF NOT EXISTS password_hash TEXT NOT NULL DEFAULT ''"
+      "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash TEXT NOT NULL DEFAULT ''"
     );
     await query(
-      "ALTER TABLE IF EXISTS users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT false"
+      "ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT false"
+    );
+
+    // roles and mapping
+    await query(`CREATE TABLE IF NOT EXISTS roles (
+      id SERIAL PRIMARY KEY,
+      name TEXT UNIQUE NOT NULL
+    )`);
+    await query(`CREATE TABLE IF NOT EXISTS user_roles (
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      role_id INTEGER REFERENCES roles(id) ON DELETE CASCADE,
+      PRIMARY KEY (user_id, role_id)
+    )`);
+    await query(
+      "INSERT INTO roles (name) VALUES ('kullanici') ON CONFLICT (name) DO NOTHING"
     );
   } catch (err) {
-    console.error("ensureUserColumns:", err.message);
+    console.error("ensureAuthTables:", err.message);
   }
 }
 
-// Run column check once for any auth request
+// Run check once for any auth request
 router.use(async (_req, _res, next) => {
-  await ensureUserColumns();
+  await ensureAuthTables();
   next();
 });
 
