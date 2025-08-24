@@ -29,7 +29,7 @@ export default function Verify() {
       setMsg("E-posta doğrulandı. Yönlendiriliyorsunuz...");
       sessionStorage.removeItem("pendingEmail");
       sessionStorage.setItem("token", data?.token || "ok");
-      setTimeout(() => navigate("/dashboard", { replace: true }), 600);
+      setTimeout(() => navigate("/anasayfa", { replace: true }), 600);
     } catch (e) {
       setErr(e?.response?.data?.error || "Doğrulama başarısız.");
     } finally {

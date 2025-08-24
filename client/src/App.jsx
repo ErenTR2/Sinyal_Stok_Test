@@ -46,7 +46,7 @@ export default function App() {
       <Route path="/dogrulama" element={<Layout><Verify /></Layout>} />
 
       {/* Protected */}
-      <Route path="/dashboard" element={<Protected><Layout><Dashboard /></Layout></Protected>} />
+      <Route path="/anasayfa" element={<Protected><Layout><Dashboard /></Layout></Protected>} />
       <Route path="/urunler" element={<Protected><Layout><Products /></Layout></Protected>} />
       <Route path="/depolar" element={<Protected><Layout><Warehouses /></Layout></Protected>} />
       <Route path="/hareketler" element={<Protected><Layout><Movements /></Layout></Protected>} />
@@ -58,7 +58,7 @@ export default function App() {
       <Route path="/urun/:kod" element={<Protected><Layout><ProductDetail/></Layout></Protected>} />
 
       {/* Ana sayfa */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/anasayfa" replace />} />
       <Route path="*" element={<Layout><NotFound /></Layout>} />
     </Routes>
   );
