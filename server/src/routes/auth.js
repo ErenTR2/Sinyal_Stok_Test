@@ -37,7 +37,11 @@ router.post("/register", async (req, res) => {
     const roleRes = await query("SELECT id FROM roles WHERE name=$1 LIMIT 1", ["kullanici"]);
     const roleId = roleRes.rows?.[0]?.id;
     if (userId && roleId) {
-      await query("INSERT INTO user_roles (user_id, role_id) VALUES ($1,$2)", [userId, roleId]);
+      try {
+        await query("INSERT INTO user_roles (user_id, role_id) VALUES ($1,$2)", [userId, roleId]);
+      } catch (err) {
+        console.error("default role assignment failed:", err.message);
+      }
     }
 
     // Doğrulama kodu gönder
