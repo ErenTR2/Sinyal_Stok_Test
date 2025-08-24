@@ -12,7 +12,6 @@ const router = Router();
 let checked = false;
 async function ensureAuthTables() {
   if (checked) return;
-  checked = true;
   try {
     // core user table
     await query(`CREATE TABLE IF NOT EXISTS users (
@@ -47,7 +46,9 @@ async function ensureAuthTables() {
     await query(
       "INSERT INTO roles (name) VALUES ('kullanici') ON CONFLICT (name) DO NOTHING"
     );
+    checked = true;
   } catch (err) {
+    checked = false; // allow retry on next request
     console.error("ensureAuthTables:", err.message);
   }
 }
