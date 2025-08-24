@@ -8,6 +8,32 @@ import { setCode, verifyCode } from "../store/codes.js";
 
 const router = Router();
 
+// Ensure new auth-related columns exist for older databases
+let checked = false;
+async function ensureUserColumns() {
+  if (checked) return;
+  checked = true;
+  try {
+    await query(
+      "ALTER TABLE IF EXISTS users ADD COLUMN IF NOT EXISTS username TEXT NOT NULL DEFAULT ''"
+    );
+    await query(
+      "ALTER TABLE IF EXISTS users ADD COLUMN IF NOT EXISTS password_hash TEXT NOT NULL DEFAULT ''"
+    );
+    await query(
+      "ALTER TABLE IF EXISTS users ADD COLUMN IF NOT EXISTS verified BOOLEAN NOT NULL DEFAULT false"
+    );
+  } catch (err) {
+    console.error("ensureUserColumns:", err.message);
+  }
+}
+
+// Run column check once for any auth request
+router.use(async (_req, _res, next) => {
+  await ensureUserColumns();
+  next();
+});
+
 /* Örnek health */
 router.get("/health", (req, res) => res.json({ ok: true }));
 
