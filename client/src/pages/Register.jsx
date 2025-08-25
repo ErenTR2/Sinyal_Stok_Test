@@ -6,9 +6,7 @@ import api from "../api";
 export default function Register() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
-  const email = emailLocal.includes("@")
-    ? emailLocal.trim()
-    : `${emailLocal.trim()}@sinyalizasyon.com`;
+  const [emailLocal, setEmailLocal] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [error, setError] = useState("");
@@ -43,6 +41,7 @@ export default function Register() {
         username: username.trim(),
         email,               // server auth.js bu ismi bekliyor
         password,
+        password2,
       });
 
       // Başarılı -> verify akışına geç

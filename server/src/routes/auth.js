@@ -11,28 +11,46 @@ const router = Router();
 /* Örnek health */
 router.get("/health", (req, res) => res.json({ ok: true }));
 
-/* ---- Kayıt (örnek) ----
-   Frontend’den gelen email/username/password’i alıp user oluşturursun.
-   Burada sadece iskelet var. Senin projendeki mevcut kayıt kodun varsa onu kullan.
-*/
+// Yeni kullanıcı kaydı
 router.post("/register", async (req, res) => {
   try {
-    const { email, username, password } = req.body;
-    if (!email || !password) return res.status(400).json({ error: "missing_fields" });
+    const { username, email, password, password2 } = req.body;
+
+    // zorunlu alanlar
+    if (!email || !password) {
+      return res.status(400).json({ error: "email_password_required" });
+    }
+    if (!username || !password2 || password !== password2) {
+      return res.status(400).json({ error: "invalid_fields" });
+    }
+
+    // email tekil mi?
+    const { rows: exist } = await query("SELECT id FROM users WHERE email=$1", [email]);
+    if (exist.length) {
+      return res.status(409).json({ error: "email_in_use" });
+    }
 
     const hashed = await bcrypt.hash(password, 10);
-    await query(
-      "INSERT INTO users (email, username, password, role) VALUES ($1,$2,$3,$4)",
-      [email, username || "", hashed, "kullanıcı"]
+    const { rows } = await query(
+      "INSERT INTO users (email, username, password, role, full_name, photo_url, warehouse_id) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, email, role",
+      [email, username, hashed, "kullanıcı", username, null, null]
     );
+    const user = rows?.[0];
 
-    // İstersen burada doğrulama kodu üretip mail gönderebilirsin
-    const code = Math.floor(100000 + Math.random() * 900000);
-    setCode(email, code, 900);
-    await sendVerificationCode(email, code);
+    // doğrulama kodu gönder (başarısız olsa da kayıt tamamlanır)
+    try {
+      const code = Math.floor(100000 + Math.random() * 900000);
+      setCode(email, code, 900);
+      await sendVerificationCode(email, code);
+    } catch (err) {
+      console.error("verification email failed", err);
+    }
 
-    res.json({ ok: true, email });
+    res.status(201).json({ ok: true, id: user.id, email: user.email, role: user.role });
   } catch (e) {
+    if (e.code === "23505") {
+      return res.status(409).json({ error: "email_in_use" });
+    }
     console.error(e);
     res.status(500).json({ error: "register_failed" });
   }
